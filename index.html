@@ -121,7 +121,7 @@ document.addEventListener("mousemove", (event) => {
     let cursorY = event.clientY;
     
     // Define proximity threshold (e.g., 100px range)
-    let cthreshold = 50;
+    let cthreshold = 150;
     if (
         cursorX > rect.left - cthreshold && cursorX < rect.right + cthreshold &&
         cursorY > rect.top - cthreshold && cursorY < rect.bottom + cthreshold
