@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bear Eye Cursor Follow</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #B4D17D;
+        }
+        .custom-cursor {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+        .bear-container {
+            position: relative;
+            display: inline-block;
+           
+        }
+        .bear {
+            width: 300px;
+        }
+        .eyes {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-43%, 105%);
+            display: flex;
+            gap: 23px;
+        }
+        .eye {
+            width: 25px;
+            height: 25px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .pupil {
+            width: 10px;
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .login-form {
+            background: white;
+            padding: 20px;
+            margin: 0px auto;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-form button:hover {
+            background: #45a049;
+        }
+        .hide-cursor {
+            cursor: none;
+        }
+    </style>
+</head>
+<body class="hide-cursor">
+    <img id="cursor" class="custom-cursor" src="frame1.png" />
+    
+    <div style="color: rgb(255, 255, 255);font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-size: 30px; margin-top: 80px;">
+        <text>Example for Micro-Interaction UI</text>
+    </div>
+
+    <div class="bear-container" style="margin-top: 0px;">
+        <img src="cute-panda-face-down-tired-carto.png" class="bear" alt="Bear">
+        <div class="eyes">
+            <div class="eye"><div class="pupil"></div></div>
+            <div class="eye"><div class="pupil"></div></div>
+        </div>
+    </div>
+
+    <div class="login-form">
+        <h2>Login</h2>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit" id="login-button">Login</button>
+    </div>
+
+    <script>
+
+
+        const cursor = document.getElementById("cursor");
+        const frames = ["butterfly/1.gif", "butterfly/2.gif", "butterfly/3.gif", "butterfly/4.gif", "butterfly/5.gif", "butterfly/6.gif", "butterfly/7.gif", "butterfly/8.gif"];
+        let frameIndex = 0;
+        const bear = document.querySelector(".bear");
+        const bearContainer = document.querySelector(".bear-container");
+
+document.addEventListener("mousemove", (event) => {
+    let rect = bearContainer.getBoundingClientRect();
+    let cursorX = event.clientX;
+    let cursorY = event.clientY;
+    
+    // Define proximity threshold (e.g., 100px range)
+    let cthreshold = 50;
+    if (
+        cursorX > rect.left - cthreshold && cursorX < rect.right + cthreshold &&
+        cursorY > rect.top - cthreshold && cursorY < rect.bottom + cthreshold
+) {
+        // Change bear image when cursor is near
+        bear.src = "panda_happy.png";  
+}
+     else {
+        // Revert to original image when cursor moves away
+        bear.src = "cute-panda-face-down-tired-carto.png";
+    }
+});
+
+
+        document.addEventListener("mousemove", (event) => {
+            cursor.style.left = `${event.pageX}px`;
+            cursor.style.top = `${event.pageY}px`;
+        });
+
+        setInterval(() => {
+            cursor.src = frames[frameIndex];
+            frameIndex = (frameIndex + 1) % frames.length;
+        }, 50);
+
+        const eyes = document.querySelectorAll('.eye');
+        const pupils = document.querySelectorAll('.pupil');
+        
+        function moveEyes(x, y) {
+            eyes.forEach((eye, index) => {
+                let rect = eye.getBoundingClientRect();
+                let eyeX = rect.left + rect.width / 2;
+                let eyeY = rect.top + rect.height / 2;
+                let deltaX = x - eyeX;
+                let deltaY = y - eyeY;
+                let angle = Math.atan2(deltaY, deltaX);
+                let moveX = Math.cos(angle) * 8;
+                let moveY = Math.sin(angle) * 8;
+                pupils[index].style.transform = `translate(${moveX}px, ${moveY}px)`;
+            });
+        }
+
+        document.addEventListener('mousemove', (event) => {
+            moveEyes(event.clientX, event.clientY);
+        });
+
+        const inputs = document.querySelectorAll('.login-form input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                document.body.classList.add('hide-cursor');
+                const moveWithCaret = () => {
+                    let rect = input.getBoundingClientRect();
+                    let cursorX = rect.left + input.selectionStart * 8;
+                    let cursorY = rect.top + 10;
+                    moveEyes(cursorX, cursorY);
+                };
+                input.addEventListener('input', moveWithCaret);
+            });
+            input.addEventListener('blur', () => {
+                document.body.classList.remove('hide-cursor');
+            });
+        });
+
+         document.getElementById("login-button").addEventListener("click", () => {
+            alert("Login successful!");
+            
+            });
+    </script>
+</body>
+</html>
